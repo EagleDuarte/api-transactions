@@ -8,7 +8,7 @@
         "dev": "ts-node-dev --respawn ./src/index.ts",
         "dev:one": "ts-node-dev ./src/index.ts",
         "dev:debug": "ts-node-dev --inspect --respawn --transpile-only ./src/index.ts",
-        "build": "tsc",
+        "build": "npx tsc",
         "start": "node ./build/index.js"
     },
     "keywords": [],
