@@ -1,15 +1,15 @@
 import { Request, Response, Router } from "express";
 import { usersList } from "../data/user-list";
-import { cpfRegisteredMiddleware } from "../middlewares/cpf-registered.middleware";
-import { userRegisteredMiddleware } from "../middlewares/user-registered.middleware";
+import { cpfAvailableMiddleware } from "../middlewares/cpf-available.middleware";
+import { userAvailableMiddleware } from "../middlewares/user-available.middleware";
 import { Transaction } from "../models/transaction-config";
 import { User } from "../models/user-config";
 
-export const userRoutes = Router();
+export const dataUserRoutes = Router();
 
-userRoutes.post(
+dataUserRoutes.post(
   "/",
-  [cpfRegisteredMiddleware],
+  [cpfAvailableMiddleware],
   (req: Request, res: Response) => {
     try {
       const { name, cpf, email, age } = req.body;
@@ -42,10 +42,8 @@ userRoutes.post(
         });
       }
 
-      // Abaixo se cria a instancia do usuário
       const user = new User(name, cpf, email, age);
 
-      // Abaixo se adiciona o array de usuários
       usersList.push(user);
 
       return res.status(201).send({
@@ -62,7 +60,7 @@ userRoutes.post(
   }
 );
 
-userRoutes.get("/:id", (req: Request, res: Response) => {
+dataUserRoutes.get("/:id", (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -91,13 +89,13 @@ userRoutes.get("/:id", (req: Request, res: Response) => {
   }
 });
 
-userRoutes.get("/", (req: Request, res: Response) => {
+dataUserRoutes.get("/", (req: Request, res: Response) => {
   try {
     const { name, email, cpf } = req.query;
 
-    let resultName = usersList.find((user) => user.name === name);
-    let resultEmail = usersList.find((user) => user.email === email);
-    let resultCpf = usersList.find((user) => user.cpf === Number(cpf));
+    let nameProvided = usersList.find((user) => user.name === name);
+    let emailProvided = usersList.find((user) => user.email === email);
+    let cpfProvided = usersList.find((user) => user.cpf === Number(cpf));
 
     if (usersList.length == 0) {
       return res.status(200).send({
@@ -114,40 +112,40 @@ userRoutes.get("/", (req: Request, res: Response) => {
       });
     }
 
-    if (!resultName && !resultEmail && !resultCpf) {
+    if (!nameProvided && !emailProvided && !cpfProvided) {
       return res.status(404).send({
         response: false,
         message: "Usuário não encontrado.",
       });
     }
 
-    if (resultName) {
+    if (nameProvided) {
       return res.status(200).send({
-        id: resultName.id,
-        name: resultName.name,
-        cpf: resultName.cpf,
-        email: resultName.email,
-        age: resultName.age,
+        id: nameProvided.id,
+        name: nameProvided.name,
+        cpf: nameProvided.cpf,
+        email: nameProvided.email,
+        age: nameProvided.age,
       });
     }
 
-    if (resultEmail) {
+    if (emailProvided) {
       return res.status(200).send({
-        id: resultEmail.id,
-        name: resultEmail.name,
-        cpf: resultEmail.cpf,
-        email: resultEmail.email,
-        age: resultEmail.age,
+        id: emailProvided.id,
+        name: emailProvided.name,
+        cpf: emailProvided.cpf,
+        email: emailProvided.email,
+        age: emailProvided.age,
       });
     }
 
-    if (resultCpf) {
+    if (cpfProvided) {
       return res.status(200).send({
-        id: resultCpf.id,
-        name: resultCpf.name,
-        cpf: resultCpf.cpf,
-        email: resultCpf.email,
-        age: resultCpf.age,
+        id: cpfProvided.id,
+        name: cpfProvided.name,
+        cpf: cpfProvided.cpf,
+        email: cpfProvided.email,
+        age: cpfProvided.age,
       });
     }
   } catch (error: any) {
@@ -159,7 +157,7 @@ userRoutes.get("/", (req: Request, res: Response) => {
   }
 });
 
-userRoutes.delete("/:id", (req: Request, res: Response) => {
+dataUserRoutes.delete("/:id", (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -188,7 +186,7 @@ userRoutes.delete("/:id", (req: Request, res: Response) => {
   }
 });
 
-userRoutes.put("/:id", (req: Request, res: Response) => {
+dataUserRoutes.put("/:id", (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { name, email, age } = req.body;
@@ -242,9 +240,9 @@ userRoutes.put("/:id", (req: Request, res: Response) => {
 });
 
 // Abaixo se inicia as transações
-userRoutes.post(
+dataUserRoutes.post(
   "/:userId/transactions",
-  [userRegisteredMiddleware],
+  [userAvailableMiddleware],
   (req: Request, res: Response) => {
     try {
       const { title, value, type } = req.body;
@@ -275,7 +273,7 @@ userRoutes.post(
         return res.status(400).send({
           response: false,
           message:
-            "O tipo de valor não é válido, descreva a income ou o resultado.)",
+            "O tipo de valor não é válido, informe o valor do depósito ou da retirada.)",
         });
       }
 
@@ -300,9 +298,9 @@ userRoutes.post(
   }
 );
 
-userRoutes.get(
+dataUserRoutes.get(
   "/:userId/transactions/:id",
-  [userRegisteredMiddleware],
+  [userAvailableMiddleware],
   (req: Request, res: Response) => {
     try {
       const { userId, id } = req.params;
@@ -331,7 +329,7 @@ userRoutes.get(
   }
 );
 
-userRoutes.get("/:userId/transactions", (req: Request, res: Response) => {
+dataUserRoutes.get("/:userId/transactions", (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { title, type } = req.query;
@@ -405,7 +403,7 @@ userRoutes.get("/:userId/transactions", (req: Request, res: Response) => {
   }
 });
 
-userRoutes.delete(
+dataUserRoutes.delete(
   "/:userId/transactions/:id",
   (req: Request, res: Response) => {
     try {
@@ -448,9 +446,9 @@ userRoutes.delete(
   }
 );
 
-userRoutes.put(
+dataUserRoutes.put(
   "/:userId/transactions/:id",
-  [userRegisteredMiddleware],
+  [userAvailableMiddleware],
   (req: Request, res: Response) => {
     try {
       const { userId, id } = req.params;

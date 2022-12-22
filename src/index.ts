@@ -1,10 +1,10 @@
 import express from "express";
-import { userRoutes } from "./routes/user-routes.routes";
+import { dataUserRoutes } from "./routes/dataUserRoutes.routes";
 
 const app = express();
 app.use(express.json());
 
-app.use("/users", userRoutes);
+app.use("/users", dataUserRoutes);
 
 app.listen(3000, () => {
   console.log("API funcionando...");

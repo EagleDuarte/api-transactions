@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { usersList } from "../data/user-list";
 
-export const cpfRegisteredMiddleware = (
+export const cpfAvailableMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
