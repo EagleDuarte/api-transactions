@@ -1,6 +1,6 @@
 import { User } from "../models/user-config";
 
 export const usersList = [
-  new User("Mario", 654321, "mario@hotmail.com", 31),
-  new User("Luke", 245672, "luke@hotmail.com", 36),
+  new User("Mario", 65432123073, "mario@hotmail.com", 31),
+  new User("Luke", 24567212372, "luke@hotmail.com", 26),
 ];
