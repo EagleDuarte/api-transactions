@@ -239,7 +239,6 @@ dataUserRoutes.put("/:id", (req: Request, res: Response) => {
   }
 });
 
-// Abaixo se inicia as transações
 dataUserRoutes.post(
   "/:userId/transactions",
   [userAvailableMiddleware],
